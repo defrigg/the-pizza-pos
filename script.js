@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-
+    // --- Data ---
     const menuData = [
         { id: 1, name: 'พิซซ่าฮาวาเอี้ยน', description: 'แป้งพิซซ่านุ่มๆ พร้อมกับปูอัดแฮมและสัปรดเสริฟคู่กับชีสเยิ้มๆ' },
         { id: 2, name: 'ผักโขมแฮมชีส', description: 'แป้งพิซซ่านุ่มๆ ผักโขมคัดอย่างดีพร้อมแฮมหอมๆ ชีสยืดๆ' },
@@ -9,31 +9,71 @@ document.addEventListener('DOMContentLoaded', () => {
         { id: 6, name: 'ข้าวโพดชีส', description: 'แป้งพิซซ่านุ่มๆ ข้าวโพดคัดอย่างดีพร้อมกับชีสยืดๆ' },
         { id: 7, name: 'ซีฟู้ด', description: 'แป้งพิซซ่านุ่มๆ ยกทะเลมาทั้งหมดไม่ว่าจะเป็นกุ้ง หอย หมึก พร้อมชีสเยิ้มๆ' },
     ];
-
-    const prices = {
-        slice: 25,
-        tray: 189,
-    };
+    const prices = { slice: 25, tray: 189 };
+    let currentOrder = [];
+    let currentTotal = 0;
 
     // --- DOM Elements ---
+    // Navigation
+    const navButtons = document.querySelectorAll('.nav-btn');
+    const views = document.querySelectorAll('.view');
+    
+    // POS View
     const menuGrid = document.querySelector('.menu-grid');
     const orderItemsList = document.getElementById('order-items');
     const totalPriceEl = document.getElementById('total-price');
     const clearOrderBtn = document.getElementById('clear-order-btn');
     const checkoutBtn = document.getElementById('checkout-btn');
     
+    // Kitchen View
+    const kitchenOrderList = document.getElementById('kitchen-order-list');
+
+    // Report View
+    const datePicker = document.getElementById('date-picker');
+    const monthPicker = document.getElementById('month-picker');
+    const showAllBtn = document.getElementById('show-all-btn');
+    const summaryRevenueEl = document.getElementById('summary-revenue');
+    const summaryOrdersEl = document.getElementById('summary-orders');
+    const summaryBestsellerEl = document.getElementById('summary-bestseller');
+    const salesLogBody = document.getElementById('sales-log-body');
+
+    // Shared Modal
     const paymentModal = document.getElementById('payment-modal');
     const closeModalBtn = document.querySelector('.close-btn');
     const modalTotalPriceEl = document.getElementById('modal-total-price');
     const confirmPaymentBtn = document.getElementById('confirm-payment-btn');
 
-    const dailySalesEl = document.getElementById('daily-sales');
-    const showSalesBtn = document.getElementById('show-sales-btn');
+    // =======================================================
+    // --- NAVIGATION LOGIC ---
+    // =======================================================
+    function handleNavClick(event) {
+        const targetView = event.target.dataset.view;
 
-    let currentOrder = [];
-    let currentTotal = 0;
+        // Update button active state
+        navButtons.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.view === targetView);
+        });
 
-    // --- Menu and Order Functions ---
+        // Update view visibility
+        views.forEach(view => {
+            view.classList.toggle('active', view.id === targetView);
+        });
+
+        // Refresh data for the activated view
+        if (targetView === 'kitchen-view') {
+            renderKitchenOrders();
+        } else if (targetView === 'report-view') {
+            const today = new Date().toISOString().slice(0, 10);
+            datePicker.value = today;
+            monthPicker.value = '';
+            generateReport('day', today);
+        }
+    }
+
+
+    // =======================================================
+    // --- POS FUNCTIONS ---
+    // =======================================================
     function renderMenu() {
         menuGrid.innerHTML = '';
         menuData.forEach(item => {
@@ -93,7 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
         updateOrder();
     }
 
-    // --- Payment Functions ---
     function showPaymentModal() {
         modalTotalPriceEl.innerHTML = `฿${currentTotal.toLocaleString()}`;
         paymentModal.style.display = 'flex';
@@ -104,128 +143,175 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleConfirmPayment() {
-        sendOrderToKitchen();
-        recordSale(currentTotal);
-        alert(`บันทึกยอดขายจำนวน ฿${currentTotal.toLocaleString()} เรียบร้อยแล้ว`);
-        closePaymentModal();
-        handleClearOrder();
-        displayDailySales();
-    }
-
-    function sendOrderToKitchen() {
-        if (currentOrder.length === 0) return;
-        const kitchenQueue = JSON.parse(localStorage.getItem('pizzaKitchenQueue')) || [];
+        // 1. Send to kitchen queue
         const newOrder = {
             id: Date.now(),
             timestamp: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit'}),
-            items: currentOrder,
+            items: [...currentOrder], // Create a copy
         };
+        const kitchenQueue = JSON.parse(localStorage.getItem('pizzaKitchenQueue')) || [];
         kitchenQueue.push(newOrder);
         localStorage.setItem('pizzaKitchenQueue', JSON.stringify(kitchenQueue));
+
+        // 2. Save to permanent sales history
+        const history = JSON.parse(localStorage.getItem('pizzaSalesHistory')) || [];
+        const newRecord = {
+            id: newOrder.id,
+            date: new Date().toISOString().slice(0, 10),
+            items: [...currentOrder],
+            total: currentTotal
+        };
+        history.push(newRecord);
+        localStorage.setItem('pizzaSalesHistory', JSON.stringify(history));
+        
+        // 3. Finalize
+        alert(`บันทึกยอดขายจำนวน ฿${currentTotal.toLocaleString()} เรียบร้อยแล้ว`);
+        closePaymentModal();
+        handleClearOrder();
     }
 
-    // --- Sales Recording ---
-    function getTodayString() {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
+
+    // =======================================================
+    // --- KITCHEN FUNCTIONS ---
+    // =======================================================
+    function renderKitchenOrders() {
+        kitchenOrderList.innerHTML = '';
+        const kitchenQueue = JSON.parse(localStorage.getItem('pizzaKitchenQueue')) || [];
+
+        if (kitchenQueue.length === 0) {
+            kitchenOrderList.innerHTML = '<p class="placeholder">ยังไม่มีออเดอร์</p>';
+            return;
+        }
+
+        kitchenQueue.forEach(order => {
+            const itemsHTML = order.items.map(item => {
+                const typeText = item.type === 'slice' ? ' (ชิ้น)' : ' (ถาด)';
+                return `<li>- ${item.name}${typeText}</li>`;
+            }).join('');
+
+            const orderCardHTML = `
+                <div class="kitchen-order-card">
+                    <div class="order-header">
+                        <h3>ออเดอร์ #${order.id.toString().slice(-4)}</h3>
+                        <span>เวลา: ${order.timestamp}</span>
+                    </div>
+                    <ul class="order-items-list">
+                        ${itemsHTML}
+                    </ul>
+                    <button class="complete-order-btn" data-order-id="${order.id}">✅ เสร็จสิ้น</button>
+                </div>
+            `;
+            kitchenOrderList.innerHTML += orderCardHTML;
+        });
     }
 
-    function recordSale(amount) {
-        const today = getTodayString();
-        let salesData = JSON.parse(localStorage.getItem('pizzaShopSales')) || {};
-        salesData[today] = (salesData[today] || 0) + amount;
-        localStorage.setItem('pizzaShopSales', JSON.stringify(salesData));
+    function handleCompleteOrder(event) {
+        const button = event.target.closest('.complete-order-btn');
+        if (!button) return;
+
+        const orderIdToComplete = parseInt(button.dataset.orderId);
+        let kitchenQueue = JSON.parse(localStorage.getItem('pizzaKitchenQueue')) || [];
+        kitchenQueue = kitchenQueue.filter(order => order.id !== orderIdToComplete);
+        localStorage.setItem('pizzaKitchenQueue', JSON.stringify(kitchenQueue));
+        renderKitchenOrders();
     }
 
-    function displayDailySales() {
-        const today = getTodayString();
-        let salesData = JSON.parse(localStorage.getItem('pizzaShopSales')) || {};
-        const todaySales = salesData[today] || 0;
-        dailySalesEl.textContent = `฿${todaySales.toLocaleString()}`;
+    // =======================================================
+    // --- REPORT FUNCTIONS ---
+    // =======================================================
+    function generateReport(filterType, filterValue) {
+        const salesHistory = JSON.parse(localStorage.getItem('pizzaSalesHistory')) || [];
+        let filteredOrders = [];
+
+        if (filterType === 'all') {
+            filteredOrders = salesHistory;
+        } else if (filterType === 'day' && filterValue) {
+            filteredOrders = salesHistory.filter(order => order.date === filterValue);
+        } else if (filterType === 'month' && filterValue) {
+            filteredOrders = salesHistory.filter(order => order.date.startsWith(filterValue));
+        }
+
+        const totalRevenue = filteredOrders.reduce((sum, order) => sum + order.total, 0);
+        const totalOrders = filteredOrders.length;
+        
+        const itemCounts = {};
+        filteredOrders.forEach(order => {
+            order.items.forEach(item => {
+                const itemName = `${item.name} (${item.type === 'slice' ? 'ชิ้น' : 'ถาด'})`;
+                itemCounts[itemName] = (itemCounts[itemName] || 0) + 1;
+            });
+        });
+
+        let bestseller = '-';
+        let maxCount = 0;
+        for (const item in itemCounts) {
+            if (itemCounts[item] > maxCount) {
+                bestseller = item;
+                maxCount = itemCounts[item];
+            }
+        }
+        if (maxCount > 0) {
+            bestseller += ` (${maxCount} รายการ)`;
+        }
+
+        summaryRevenueEl.textContent = `฿${totalRevenue.toLocaleString()}`;
+        summaryOrdersEl.textContent = totalOrders.toLocaleString();
+        summaryBestsellerEl.textContent = bestseller;
+
+        salesLogBody.innerHTML = '';
+        if (filteredOrders.length === 0) {
+            salesLogBody.innerHTML = '<tr><td colspan="4">ไม่พบข้อมูลการขายในช่วงเวลานี้</td></tr>';
+            return;
+        }
+
+        filteredOrders.forEach(order => {
+            order.items.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${new Date(order.id).toLocaleString('th-TH')}</td>
+                    <td>${item.name}</td>
+                    <td>${item.type === 'slice' ? 'ชิ้น' : 'ถาด'}</td>
+                    <td>฿${item.price.toLocaleString()}</td>
+                `;
+                salesLogBody.appendChild(row);
+            });
+        });
     }
 
-    // --- Event Listeners ---
+    // =======================================================
+    // --- EVENT LISTENERS & INITIALIZATION ---
+    // =======================================================
+    // Navigation
+    navButtons.forEach(btn => btn.addEventListener('click', handleNavClick));
+
+    // POS
     menuGrid.addEventListener('click', handleAddItem);
     clearOrderBtn.addEventListener('click', handleClearOrder);
     checkoutBtn.addEventListener('click', showPaymentModal);
     closeModalBtn.addEventListener('click', closePaymentModal);
     confirmPaymentBtn.addEventListener('click', handleConfirmPayment);
-    showSalesBtn.addEventListener('click', displayDailySales);
-    
     window.addEventListener('click', (event) => {
-        if (event.target == paymentModal) {
-            closePaymentModal();
-        }
+        if (event.target == paymentModal) closePaymentModal();
+    });
+
+    // Kitchen
+    kitchenOrderList.addEventListener('click', handleCompleteOrder);
+
+    // Reports
+    datePicker.addEventListener('change', () => {
+        monthPicker.value = '';
+        generateReport('day', datePicker.value);
+    });
+    monthPicker.addEventListener('change', () => {
+        datePicker.value = '';
+        generateReport('month', monthPicker.value);
+    });
+    showAllBtn.addEventListener('click', () => {
+        datePicker.value = '';
+        monthPicker.value = '';
+        generateReport('all');
     });
 
     // --- Initial Load ---
     renderMenu();
-    displayDailySales();
 });
-// ... (โค้ดส่วนบนเหมือนเดิม) ...
-
-    function handleConfirmPayment() {
-        sendOrderToKitchen();
-        
-        // OLD WAY: recordSale(currentTotal);
-        // NEW WAY: Save detailed history, which also allows for daily total calculation
-        saveOrderToHistory();
-
-        alert(`บันทึกยอดขายจำนวน ฿${currentTotal.toLocaleString()} เรียบร้อยแล้ว`);
-        closePaymentModal();
-        handleClearOrder();
-        displayDailySales(); // This function will now read from the new history
-    }
-
-    function sendOrderToKitchen() {
-        if (currentOrder.length === 0) return;
-        const kitchenQueue = JSON.parse(localStorage.getItem('pizzaKitchenQueue')) || [];
-        const newOrder = {
-            id: Date.now(),
-            timestamp: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit'}),
-            items: currentOrder,
-        };
-        kitchenQueue.push(newOrder);
-        localStorage.setItem('pizzaKitchenQueue', JSON.stringify(kitchenQueue));
-    }
-
-    function getTodayString() {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-    }
-
-    // NEW: Function to save detailed order history
-    function saveOrderToHistory() {
-        if (currentOrder.length === 0) return;
-
-        const history = JSON.parse(localStorage.getItem('pizzaSalesHistory')) || [];
-        const newRecord = {
-            id: Date.now(),
-            date: getTodayString(), // YYYY-MM-DD format
-            items: currentOrder,
-            total: currentTotal
-        };
-        history.push(newRecord);
-        localStorage.setItem('pizzaSalesHistory', JSON.stringify(history));
-    }
-
-
-    // UPDATED: This function now calculates from the detailed history
-    function displayDailySales() {
-        const today = getTodayString();
-        const history = JSON.parse(localStorage.getItem('pizzaSalesHistory')) || [];
-        
-        const todaySales = history
-            .filter(order => order.date === today) // Get only today's orders
-            .reduce((sum, order) => sum + order.total, 0); // Sum their totals
-
-        dailySalesEl.textContent = `฿${todaySales.toLocaleString()}`;
-    }
-
-// ... (ส่วน Event Listeners และ Initial Load เหมือนเดิม) ...
