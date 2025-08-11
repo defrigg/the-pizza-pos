@@ -3,55 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Pizza - POS System</title>
+    <title>The Pizza - All-in-One POS</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <nav class="main-nav">
+        <button class="nav-btn active" data-view="pos-view">รับออเดอร์ (POS)</button>
+        <button class="nav-btn" data-view="kitchen-view">ห้องครัว 🍳</button>
+        <button class="nav-btn" data-view="report-view">รายงานยอดขาย 📈</button>
+    </nav>
 
-    <div class="app-container">
-        <main class="menu-container">
-            <header class="main-header">
-                <h1>🍕 The Pizza</h1>
-                <p>เลือกเมนูที่ต้องการด้านล่างได้เลย</p>
-            </header>
-            <div class="menu-grid">
-                </div>
-        </main>
-
-        <aside class="sidebar">
-            <div class="sidebar-content">
-                <div class="order-box">
-                    <h2>รายการสั่งซื้อ</h2>
-                    <ul id="order-items">
-                        <li class="placeholder">ยังไม่มีรายการ...</li>
-                    </ul>
-                    <div class="total-area">
-                        <span>ยอดรวม</span>
-                        <span id="total-price">฿0</span>
+    <div class="content-container">
+        <div id="pos-view" class="view active">
+            <div class="app-container">
+                <main class="menu-container">
+                    <header class="main-header">
+                        <h1>🍕 The Pizza</h1>
+                        <p>เลือกเมนูที่ต้องการด้านล่างได้เลย</p>
+                    </header>
+                    <div class="menu-grid">
+                        </div>
+                </main>
+        
+                <aside class="sidebar">
+                    <div class="sidebar-content">
+                        <div class="order-box">
+                            <h2>รายการสั่งซื้อ</h2>
+                            <ul id="order-items">
+                                <li class="placeholder">ยังไม่มีรายการ...</li>
+                            </ul>
+                            <div class="total-area">
+                                <span>ยอดรวม</span>
+                                <span id="total-price">฿0</span>
+                            </div>
+                            <div class="action-buttons">
+                                <button id="clear-order-btn">ล้าง</button>
+                                <button id="checkout-btn" disabled>ชำระเงิน</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="action-buttons">
-                        <button id="clear-order-btn">ล้าง</button>
-                        <button id="checkout-btn" disabled>ชำระเงิน</button>
-                    </div>
-                </div>
-
-                <div class="sales-report-box">
-                    <h2>รายงานยอดขาย</h2>
-                    <div class="sales-summary">
-                        <span>ยอดขายวันนี้</span>
-                        <span id="daily-sales">฿0</span>
-                    </div>
-                    <button id="show-sales-btn">รีเฟรชยอดขาย</button>
-                </div>
-                
-                <a href="kitchen.html" target="_blank" class="kitchen-link-btn">
-                    เปิดหน้าสำหรับครัว 🍳
-                </a>
+                </aside>
             </div>
-        </aside>
+        </div>
+
+        <div id="kitchen-view" class="view">
+            <section class="kitchen-container">
+                <header class="kitchen-header">
+                    <h1>📋 รายการสำหรับครัว (Kitchen Orders)</h1>
+                    <p>ออเดอร์ใหม่จะแสดงที่นี่อัตโนมัติ</p>
+                </header>
+                <div id="kitchen-order-list" class="kitchen-order-list">
+                    </div>
+            </section>
+        </div>
+
+        <div id="report-view" class="view">
+            <div class="report-container">
+                <header class="report-header">
+                    <h1>📈 รายงานยอดขาย</h1>
+                    <p>เลือกช่วงเวลาที่ต้องการดูข้อมูล</p>
+                </header>
+        
+                <section class="report-controls">
+                    <div class="control-group">
+                        <label for="date-picker">เลือกดูรายวัน:</label>
+                        <input type="date" id="date-picker">
+                    </div>
+                    <div class="control-group">
+                        <label for="month-picker">เลือกดูรายเดือน:</label>
+                        <input type="month" id="month-picker">
+                    </div>
+                    <div class="control-group">
+                        <button id="show-all-btn">แสดงยอดขายทั้งหมด</button>
+                    </div>
+                </section>
+        
+                <section class="report-summary">
+                    <div class="summary-card">
+                        <h3>ยอดขายรวม</h3>
+                        <p id="summary-revenue">฿0</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>จำนวนออเดอร์</h3>
+                        <p id="summary-orders">0</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>เมนูขายดีที่สุด</h3>
+                        <p id="summary-bestseller">-</p>
+                    </div>
+                </section>
+        
+                <section class="report-details">
+                    <h2>ประวัติการขายแบบละเอียด</h2>
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>เวลา</th>
+                                    <th>ชื่อเมนู</th>
+                                    <th>ประเภท</th>
+                                    <th>ราคา</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sales-log-body">
+                                </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+        </div>
     </div>
 
     <div id="payment-modal" class="modal">
@@ -69,23 +132,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-<aside class="sidebar">
-            <div class="sidebar-content">
-                <div class="sales-report-box">
-                    <h2>รายงานยอดขาย</h2>
-                    <div class="sales-summary">
-                        <span>ยอดขายวันนี้</span>
-                        <span id="daily-sales">฿0</span>
-                    </div>
-                    <button id="show-sales-btn">รีเฟรชยอดขาย</button>
-                </div>
-                
-                <a href="kitchen.html" target="_blank" class="kitchen-link-btn">
-                    เปิดหน้าสำหรับครัว 🍳
-                </a>
-
-                <a href="report.html" target="_blank" class="report-link-btn">
-                    เปิดหน้ารายงานยอดขาย 📈
-                </a>
-            </div>
-        </aside>
