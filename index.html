@@ -11,40 +11,39 @@
 </head>
 <body>
 
-    <header>
-        <h1>🍕 The Pizza 🍕</h1>
-    </header>
-
-    <div class="main-container">
-        <section class="menu-section">
-            <h2>เมนูของเรา</h2>
+    <div class="app-container">
+        <main class="menu-container">
+            <header class="main-header">
+                <h1>🍕 The Pizza</h1>
+                <p>เลือกเมนูที่ต้องการด้านล่างได้เลย</p>
+            </header>
             <div class="menu-grid">
                 </div>
-        </section>
+        </main>
 
-        <aside class="order-section">
-            <div class="order-box">
-                <h2>รายการสั่งซื้อ</h2>
-                <div class="order-summary">
+        <aside class="sidebar">
+            <div class="sidebar-content">
+                <div class="order-box">
+                    <h2>รายการสั่งซื้อ</h2>
                     <ul id="order-items">
                         <li class="placeholder">ยังไม่มีรายการ...</li>
                     </ul>
                     <div class="total-area">
-                        <p>ยอดรวม:</p>
-                        <p id="total-price">฿0</p>
+                        <span>ยอดรวม</span>
+                        <span id="total-price">฿0</span>
                     </div>
                     <div class="action-buttons">
-                        <button id="clear-order-btn">ล้างรายการ</button>
+                        <button id="clear-order-btn">ล้าง</button>
                         <button id="checkout-btn" disabled>ชำระเงิน</button>
                     </div>
                 </div>
-            </div>
 
-            <div class="sales-report-box">
-                <h2>รายงานยอดขาย</h2>
-                <div class="sales-summary">
-                    <p>ยอดขายวันนี้:</p>
-                    <p id="daily-sales">฿0</p>
+                <div class="sales-report-box">
+                    <h2>รายงานยอดขาย</h2>
+                    <div class="sales-summary">
+                        <span>ยอดขายวันนี้</span>
+                        <span id="daily-sales">฿0</span>
+                    </div>
                     <button id="show-sales-btn">รีเฟรชยอดขาย</button>
                 </div>
             </div>
@@ -56,9 +55,9 @@
             <span class="close-btn">&times;</span>
             <h2>ชำระเงิน</h2>
             <p>ยอดที่ต้องชำระ: <strong id="modal-total-price">฿0</strong></p>
-            <p>กรุณาสแกน QR Code ด้านล่างเพื่อชำระเงิน</p>
+            <p class="scan-text">สแกน QR Code เพื่อชำระเงิน</p>
             <img src="promptpay-qr.png" alt="PromptPay QR Code" class="qr-code-img">
-            <p class="note">**พนักงานกดยืนยันหลังจากลูกค้าชำระเงินเรียบร้อยแล้วเท่านั้น**</p>
+            <p class="note">**พนักงานกดยืนยันหลังจากลูกค้าชำระเงินเรียบร้อยแล้ว**</p>
             <button id="confirm-payment-btn">ยืนยันการชำระเงิน</button>
         </div>
     </div>
