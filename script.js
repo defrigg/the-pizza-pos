@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tray: 189,
     };
 
+    // --- DOM Elements ---
     const menuGrid = document.querySelector('.menu-grid');
     const orderItemsList = document.getElementById('order-items');
     const totalPriceEl = document.getElementById('total-price');
@@ -29,9 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const dailySalesEl = document.getElementById('daily-sales');
     const showSalesBtn = document.getElementById('show-sales-btn');
 
+    // NEW: Kitchen Display DOM Element
+    const kitchenOrderList = document.getElementById('kitchen-order-list');
+
     let currentOrder = [];
     let currentTotal = 0;
 
+    // --- Menu and Order Functions ---
     function renderMenu() {
         menuGrid.innerHTML = '';
         menuData.forEach(item => {
@@ -91,6 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateOrder();
     }
 
+    // --- Payment Functions ---
     function showPaymentModal() {
         modalTotalPriceEl.innerHTML = `฿${currentTotal.toLocaleString()}`;
         paymentModal.style.display = 'flex';
@@ -101,6 +107,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleConfirmPayment() {
+        // NEW: Send order to kitchen before clearing it
+        sendOrderToKitchen();
+
         recordSale(currentTotal);
         alert(`บันทึกยอดขายจำนวน ฿${currentTotal.toLocaleString()} เรียบร้อยแล้ว`);
         closePaymentModal();
@@ -108,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
         displayDailySales();
     }
 
+    // --- Sales Recording ---
     function getTodayString() {
         const today = new Date();
         const year = today.getFullYear();
@@ -130,20 +140,90 @@ document.addEventListener('DOMContentLoaded', () => {
         dailySalesEl.textContent = `฿${todaySales.toLocaleString()}`;
     }
 
+    // --- NEW: Kitchen Display Functions ---
+
+    function sendOrderToKitchen() {
+        if (currentOrder.length === 0) return;
+
+        const kitchenQueue = JSON.parse(localStorage.getItem('pizzaKitchenQueue')) || [];
+
+        const newOrder = {
+            id: Date.now(), // Unique ID for the order
+            timestamp: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit'}),
+            items: currentOrder,
+        };
+
+        kitchenQueue.push(newOrder);
+        localStorage.setItem('pizzaKitchenQueue', JSON.stringify(kitchenQueue));
+
+        renderKitchenOrders(); // Update display immediately
+    }
+
+    function renderKitchenOrders() {
+        kitchenOrderList.innerHTML = '';
+        const kitchenQueue = JSON.parse(localStorage.getItem('pizzaKitchenQueue')) || [];
+
+        if (kitchenQueue.length === 0) {
+            kitchenOrderList.innerHTML = '<p class="placeholder">ยังไม่มีออเดอร์</p>';
+            return;
+        }
+
+        kitchenQueue.forEach(order => {
+            const itemsHTML = order.items.map(item => {
+                const typeText = item.type === 'slice' ? ' (ชิ้น)' : ' (ถาด)';
+                return `<li>- ${item.name}${typeText}</li>`;
+            }).join('');
+
+            const orderCardHTML = `
+                <div class="kitchen-order-card">
+                    <div class="order-header">
+                        <h3>ออเดอร์ #${order.id.toString().slice(-4)}</h3>
+                        <span>เวลา: ${order.timestamp}</span>
+                    </div>
+                    <ul class="order-items-list">
+                        ${itemsHTML}
+                    </ul>
+                    <button class="complete-order-btn" data-order-id="${order.id}">เสร็จสิ้น</button>
+                </div>
+            `;
+            kitchenOrderList.innerHTML += orderCardHTML;
+        });
+    }
+
+    function handleCompleteOrder(event) {
+        const button = event.target.closest('.complete-order-btn');
+        if (!button) return;
+
+        const orderIdToComplete = parseInt(button.dataset.orderId);
+        let kitchenQueue = JSON.parse(localStorage.getItem('pizzaKitchenQueue')) || [];
+        
+        // Filter out the completed order
+        kitchenQueue = kitchenQueue.filter(order => order.id !== orderIdToComplete);
+        
+        localStorage.setItem('pizzaKitchenQueue', JSON.stringify(kitchenQueue));
+        renderKitchenOrders(); // Re-render the list
+    }
+
+
+    // --- Event Listeners ---
     menuGrid.addEventListener('click', handleAddItem);
     clearOrderBtn.addEventListener('click', handleClearOrder);
-    
     checkoutBtn.addEventListener('click', showPaymentModal);
     closeModalBtn.addEventListener('click', closePaymentModal);
     confirmPaymentBtn.addEventListener('click', handleConfirmPayment);
     showSalesBtn.addEventListener('click', displayDailySales);
 
+    // NEW: Listener for kitchen area
+    kitchenOrderList.addEventListener('click', handleCompleteOrder);
+    
     window.addEventListener('click', (event) => {
         if (event.target == paymentModal) {
             closePaymentModal();
         }
     });
 
+    // --- Initial Load ---
     renderMenu();
     displayDailySales();
+    renderKitchenOrders(); // Render pending kitchen orders on page load
 });
