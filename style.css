@@ -1,92 +1,109 @@
+/* --- General & Variables --- */
 :root {
-    --primary-red: #d92027;
-    --primary-green: #297a38;
-    --light-cream: #fdf5e6;
-    --dark-grey: #333;
-    --light-grey: #f4f4f4;
-    --checkout-blue: #007bff;
+    --red: #e74c3c;
+    --green: #27ae60;
+    --dark-blue: #2c3e50;
+    --light-gray: #ecf0f1;
+    --medium-gray: #bdc3c7;
+    --white: #ffffff;
+    --shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 body {
     font-family: 'Kanit', sans-serif;
-    margin: 0;
-    background-color: var(--light-cream);
-    color: var(--dark-grey);
+    background-color: var(--light-gray);
+    color: var(--dark-blue);
 }
 
-header {
-    background-color: var(--primary-red);
-    color: white;
-    text-align: center;
-    padding: 1rem 0;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-header h1 {
-    margin: 0;
-    font-size: 2.5rem;
-}
-
-.main-container {
+/* --- Main Layout --- */
+.app-container {
     display: flex;
-    flex-wrap: wrap;
-    padding: 1rem;
-    gap: 1rem;
+    width: 100%;
+    min-height: 100vh;
 }
 
-.menu-section {
-    flex: 3;
-    min-width: 300px;
+.menu-container {
+    flex: 1;
+    padding: 2rem;
+    overflow-y: auto;
 }
 
-.menu-section h2, .order-section h2 {
-    color: var(--primary-green);
-    border-bottom: 3px solid var(--primary-green);
-    padding-bottom: 0.5rem;
-    margin-top: 0;
+.sidebar {
+    width: 380px;
+    background-color: var(--white);
+    padding: 2rem;
+    box-shadow: -5px 0 20px rgba(0, 0, 0, 0.05);
 }
 
+.sidebar-content {
+    position: sticky;
+    top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* --- Header --- */
+.main-header h1 {
+    font-size: 2.5rem;
+    color: var(--red);
+}
+
+.main-header p {
+    font-size: 1.1rem;
+    color: #7f8c8d;
+    margin-bottom: 2rem;
+}
+
+/* --- Menu Grid --- */
 .menu-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
 }
 
 .menu-item {
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    padding: 1rem;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
     display: flex;
     flex-direction: column;
-    text-align: center;
-    transition: transform 0.2s, box-shadow 0.2s;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .menu-item:hover {
     transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 
 .menu-item img {
     width: 100%;
-    height: 150px;
+    height: 160px;
     object-fit: cover;
-    border-radius: 4px;
-    margin-bottom: 0.5rem;
-    background-color: #eee;
+}
+
+.menu-item-content {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
 }
 
 .menu-item h3 {
-    margin: 0.5rem 0;
-    color: var(--dark-grey);
     font-size: 1.2rem;
+    margin-bottom: 0.5rem;
 }
 
 .menu-item p {
-    font-size: 0.85rem;
-    color: #666;
+    font-size: 0.9rem;
+    color: #7f8c8d;
     flex-grow: 1;
     margin-bottom: 1rem;
 }
@@ -94,146 +111,148 @@ header h1 {
 .price-buttons {
     display: flex;
     gap: 0.5rem;
+    margin-top: auto;
 }
 
 .price-buttons button {
     flex: 1;
-    background-color: var(--primary-green);
-    color: white;
+    background: var(--green);
+    color: var(--white);
     border: none;
-    padding: 0.75rem;
-    border-radius: 5px;
+    padding: 0.7rem;
+    border-radius: 8px;
     cursor: pointer;
     font-family: 'Kanit', sans-serif;
     font-size: 0.9rem;
+    font-weight: bold;
     transition: background-color 0.2s;
 }
 
 .price-buttons button:hover {
-    background-color: #21602d;
+    background-color: #2ecc71;
 }
 
-.order-section {
-    flex: 1;
-    min-width: 280px;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
+/* --- Sidebar Boxes (Order & Sales) --- */
 .order-box, .sales-report-box {
-    background: white;
-    border-radius: 8px;
-    padding: 1rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    position: sticky;
-    top: 1rem;
+    background: var(--light-gray);
+    border: 1px solid #dde2e4;
+    padding: 1.5rem;
+    border-radius: 12px;
+}
+
+.order-box h2, .sales-report-box h2 {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--medium-gray);
+    padding-bottom: 0.75rem;
 }
 
 #order-items {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    max-height: 35vh;
+    list-style: none;
+    max-height: 25vh;
     overflow-y: auto;
+    margin-bottom: 1rem;
 }
 
 #order-items li {
     display: flex;
     justify-content: space-between;
-    padding: 0.5rem 0;
-    border-bottom: 1px solid var(--light-grey);
-}
-
-#order-items li.placeholder {
-    justify-content: center;
-    color: #999;
+    padding: 0.75rem 0.25rem;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #dde2e4;
 }
 
 #order-items li:last-child {
     border-bottom: none;
 }
 
+#order-items .placeholder {
+    justify-content: center;
+    color: #95a5a6;
+}
+
 .total-area {
     display: flex;
     justify-content: space-between;
     font-weight: bold;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     margin-top: 1rem;
     padding-top: 1rem;
-    border-top: 2px solid var(--dark-grey);
+    border-top: 2px solid var(--dark-blue);
 }
 
-#total-price {
-    color: var(--primary-red);
+.total-area #total-price {
+    color: var(--red);
 }
 
 .action-buttons {
-    display: flex;
-    gap: 0.5rem;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 0.75rem;
     margin-top: 1rem;
 }
 
 .action-buttons button {
-    flex: 1;
-    padding: 0.75rem;
+    padding: 0.8rem;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     font-family: 'Kanit', sans-serif;
     font-size: 1rem;
+    font-weight: bold;
     cursor: pointer;
-    transition: background-color 0.2s, opacity 0.2s;
+    transition: all 0.2s;
 }
 
 #clear-order-btn {
-    background-color: var(--primary-red);
-    color: white;
+    background: #e4e9eb;
+    color: var(--dark-blue);
 }
-
 #clear-order-btn:hover {
-    background-color: #b21a21;
+    background: #d5dadd;
 }
 
 #checkout-btn {
-    background-color: var(--checkout-blue);
-    color: white;
+    background: var(--red);
+    color: var(--white);
 }
-
 #checkout-btn:hover {
-    background-color: #0069d9;
+    background: #c0392b;
 }
-
 #checkout-btn:disabled {
-    background-color: #aaa;
+    background: var(--medium-gray);
     cursor: not-allowed;
 }
 
-/* NEW: Sales Report Styles */
 .sales-summary {
     display: flex;
-    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: bold;
-}
-#daily-sales {
-    color: var(--primary-green);
-    font-size: 1.5rem;
-}
-#show-sales-btn {
-    width: 100%;
-    margin-top: 1rem;
-    padding: 0.5rem;
-    background-color: #6c757d;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-family: 'Kanit', sans-serif;
-    cursor: pointer;
+    margin-bottom: 1rem;
 }
 
-/* NEW: Modal Styles */
+#daily-sales {
+    font-size: 1.5rem;
+    color: var(--green);
+}
+
+#show-sales-btn {
+    width: 100%;
+    padding: 0.7rem;
+    background: var(--dark-blue);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+#show-sales-btn:hover {
+    background-color: #34495e;
+}
+
+
+/* --- Modal & QR Code --- */
 .modal {
     display: none;
     position: fixed;
@@ -242,62 +261,97 @@ header h1 {
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
     background-color: rgba(0,0,0,0.6);
+    display: none;
+    align-items: center;
+    justify-content: center;
 }
 
 .modal-content {
-    background-color: #fefefe;
-    margin: 10% auto;
-    padding: 2rem;
-    border: 1px solid #888;
+    background-color: var(--white);
+    padding: 2rem 2.5rem;
+    border-radius: 12px;
     width: 90%;
-    max-width: 400px;
-    border-radius: 8px;
+    max-width: 380px;
     text-align: center;
     position: relative;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.2);
 }
 
 .close-btn {
-    color: #aaa;
+    color: var(--medium-gray);
     position: absolute;
     top: 10px;
     right: 20px;
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
+    transition: color 0.2s;
+}
+.close-btn:hover {
+    color: var(--dark-blue);
+}
+
+.modal-content h2 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.modal-content #modal-total-price {
+    font-size: 2.2rem;
+    color: var(--red);
+    font-weight: bold;
+}
+
+.scan-text {
+    margin: 1rem 0 0.5rem;
 }
 
 .qr-code-img {
-    width: 80%;
-    max-width: 250px;
-    margin: 1rem auto;
+    width: 100%;
+    max-width: 200px; /* <--- QR Code Resized Here */
+    margin: 0 auto;
     display: block;
-    border: 1px solid #ccc;
+    border-radius: 8px;
+    border: 1px solid var(--light-gray);
 }
 
 .note {
-    font-size: 0.9rem;
-    color: var(--primary-red);
+    font-size: 0.85rem;
+    color: #7f8c8d;
+    margin-top: 1.5rem;
 }
 
 #confirm-payment-btn {
     width: 100%;
     padding: 0.8rem;
-    background-color: var(--primary-green);
+    background-color: var(--green);
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     font-size: 1.1rem;
+    font-weight: bold;
     cursor: pointer;
     margin-top: 1rem;
+    transition: background-color 0.2s;
+}
+#confirm-payment-btn:hover {
+    background-color: #2ecc71;
 }
 
-@media (max-width: 768px) {
-    .main-container {
+/* --- Responsive for Mobile --- */
+@media (max-width: 992px) {
+    .app-container {
         flex-direction: column;
     }
-    .order-section {
-        flex-direction: column;
+    .sidebar {
+        width: 100%;
+        box-shadow: none;
+    }
+    .sidebar-content {
+        position: static;
+    }
+    #order-items {
+        max-height: none;
     }
 }
