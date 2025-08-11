@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Pizza - POS System</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header>
+        <h1>🍕 The Pizza 🍕</h1>
+    </header>
+
+    <div class="main-container">
+        <section class="menu-section">
+            <h2>เมนูของเรา</h2>
+            <div class="menu-grid">
+                </div>
+        </section>
+
+        <aside class="order-section">
+            <h2>รายการสั่งซื้อ</h2>
+            <div class="order-summary">
+                <ul id="order-items">
+                    <li class="placeholder">ยังไม่มีรายการ...</li>
+                </ul>
+                <div class="total-area">
+                    <p>ยอดรวม:</p>
+                    <p id="total-price">฿0</p>
+                </div>
+                <button id="clear-order-btn">ล้างรายการ</button>
+            </div>
+        </aside>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
