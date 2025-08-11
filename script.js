@@ -165,3 +165,67 @@ document.addEventListener('DOMContentLoaded', () => {
     renderMenu();
     displayDailySales();
 });
+// ... (โค้ดส่วนบนเหมือนเดิม) ...
+
+    function handleConfirmPayment() {
+        sendOrderToKitchen();
+        
+        // OLD WAY: recordSale(currentTotal);
+        // NEW WAY: Save detailed history, which also allows for daily total calculation
+        saveOrderToHistory();
+
+        alert(`บันทึกยอดขายจำนวน ฿${currentTotal.toLocaleString()} เรียบร้อยแล้ว`);
+        closePaymentModal();
+        handleClearOrder();
+        displayDailySales(); // This function will now read from the new history
+    }
+
+    function sendOrderToKitchen() {
+        if (currentOrder.length === 0) return;
+        const kitchenQueue = JSON.parse(localStorage.getItem('pizzaKitchenQueue')) || [];
+        const newOrder = {
+            id: Date.now(),
+            timestamp: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit'}),
+            items: currentOrder,
+        };
+        kitchenQueue.push(newOrder);
+        localStorage.setItem('pizzaKitchenQueue', JSON.stringify(kitchenQueue));
+    }
+
+    function getTodayString() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    // NEW: Function to save detailed order history
+    function saveOrderToHistory() {
+        if (currentOrder.length === 0) return;
+
+        const history = JSON.parse(localStorage.getItem('pizzaSalesHistory')) || [];
+        const newRecord = {
+            id: Date.now(),
+            date: getTodayString(), // YYYY-MM-DD format
+            items: currentOrder,
+            total: currentTotal
+        };
+        history.push(newRecord);
+        localStorage.setItem('pizzaSalesHistory', JSON.stringify(history));
+    }
+
+
+    // UPDATED: This function now calculates from the detailed history
+    function displayDailySales() {
+        const today = getTodayString();
+        const history = JSON.parse(localStorage.getItem('pizzaSalesHistory')) || [];
+        
+        const todaySales = history
+            .filter(order => order.date === today) // Get only today's orders
+            .reduce((sum, order) => sum + order.total, 0); // Sum their totals
+
+        dailySalesEl.textContent = `฿${todaySales.toLocaleString()}`;
+    }
+
+// ... (ส่วน Event Listeners และ Initial Load เหมือนเดิม) ...
