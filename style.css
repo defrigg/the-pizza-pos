@@ -2,6 +2,7 @@
 :root {
     --red: #e74c3c;
     --green: #27ae60;
+    --blue: #3498db;
     --dark-blue: #2c3e50;
     --light-gray: #ecf0f1;
     --medium-gray: #bdc3c7;
@@ -26,10 +27,12 @@ body {
     display: flex;
     width: 100%;
     min-height: 100vh;
+    flex-wrap: wrap; /* Allow wrapping */
 }
 
 .menu-container {
-    flex: 1;
+    flex-grow: 1;
+    min-width: 60%;
     padding: 2rem;
     overflow-y: auto;
 }
@@ -254,7 +257,6 @@ body {
 
 /* --- Modal & QR Code --- */
 .modal {
-    display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -309,7 +311,7 @@ body {
 
 .qr-code-img {
     width: 100%;
-    max-width: 200px; /* <--- QR Code Resized Here */
+    max-width: 200px; 
     margin: 0 auto;
     display: block;
     border-radius: 8px;
@@ -339,6 +341,83 @@ body {
     background-color: #2ecc71;
 }
 
+/* --- NEW: Kitchen Display Styles --- */
+.kitchen-container {
+    width: 100%;
+    background-color: #dfe6e9;
+    padding: 2rem;
+    border-top: 5px solid var(--dark-blue);
+}
+
+.kitchen-container h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.kitchen-order-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.kitchen-order-list .placeholder {
+    font-size: 1.2rem;
+    color: #636e72;
+}
+
+.kitchen-order-card {
+    background: var(--white);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.order-header {
+    border-bottom: 1px solid var(--light-gray);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.order-header h3 {
+    font-size: 1.2rem;
+}
+
+.order-header span {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+.order-items-list {
+    list-style: none;
+    flex-grow: 1;
+    margin-bottom: 1.5rem;
+}
+
+.order-items-list li {
+    padding: 0.25rem 0;
+}
+
+.complete-order-btn {
+    background-color: var(--blue);
+    color: var(--white);
+    border: none;
+    border-radius: 8px;
+    padding: 0.8rem;
+    font-family: 'Kanit', sans-serif;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.complete-order-btn:hover {
+    background-color: #2980b9;
+}
+
+
 /* --- Responsive for Mobile --- */
 @media (max-width: 992px) {
     .app-container {
@@ -347,11 +426,15 @@ body {
     .sidebar {
         width: 100%;
         box-shadow: none;
+        order: -1; /* Move sidebar to top on mobile */
     }
     .sidebar-content {
         position: static;
     }
     #order-items {
         max-height: none;
+    }
+    .kitchen-order-card {
+        width: 100%;
     }
 }
