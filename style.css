@@ -524,7 +524,7 @@ tbody tr:hover {
 
 .qr-code-img {
     width: 100%;
-    max-width: 160px; /* <<< ขนาด QR Code ถูกแก้ไขที่นี่แล้ว */
+    max-width: 200px; /* <<< ขนาด QR Code ถูกแก้ไขที่นี่แล้ว */
     margin: 0 auto;
     display: block;
     border-radius: 8px;
@@ -587,7 +587,7 @@ tbody tr:hover {
 
 .qr-code-img {
     width: 100%;
-    max-width: 160px; 
+    max-width: 200px; 
     margin: 0.5rem auto 1.5rem auto; /* Adjusted margin */
     display: block;
     border-radius: 8px;
