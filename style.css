@@ -572,3 +572,73 @@ tbody tr:hover {
         width: 100%;
     }
 }
+/* ... โค้ดส่วนอื่นเหมือนเดิม ... */
+
+/* --- Shared Modal Styles --- */
+.modal-content {
+    /* ... */
+    display: flex; /* NEW: Use flexbox for better alignment */
+    flex-direction: column; /* NEW: Arrange items vertically */
+    text-align: center;
+    /* ... */
+}
+
+/* ... โค้ดอื่น ๆ ... */
+
+.qr-code-img {
+    width: 100%;
+    max-width: 160px; 
+    margin: 0.5rem auto 1.5rem auto; /* Adjusted margin */
+    display: block;
+    border-radius: 8px;
+    border: 1px solid var(--light-gray);
+}
+
+/* DELETED: .note class styling (can be removed) */
+
+/* NEW: Styles for the modal action buttons area */
+.modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    width: 100%;
+    margin-top: auto; /* Push buttons to the bottom */
+}
+
+/* NEW: General button styles for modal */
+.modal-actions button {
+    width: 100%;
+    padding: 0.8rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    font-family: 'Kanit', sans-serif;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.modal-actions button:active {
+    transform: scale(0.98);
+}
+
+/* UPDATED: Primary button style */
+#confirm-payment-btn.btn-primary {
+    background-color: var(--green);
+    color: white;
+}
+#confirm-payment-btn.btn-primary:hover {
+    background-color: #2ecc71;
+}
+
+/* NEW: Secondary button style */
+.btn-secondary {
+    background-color: #e4e9eb;
+    color: var(--dark-blue);
+}
+.btn-secondary:hover {
+    background-color: #d5dadd;
+}
+
+
+/* ... โค้ดส่วน responsive เหมือนเดิม ... */
