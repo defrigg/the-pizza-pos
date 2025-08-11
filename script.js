@@ -1,13 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- Data ---
     const menuData = [
-        { id: 1, name: 'พิซซ่าฮาวาเอี้ยน', description: 'แป้งพิซซ่านุ่มๆ พร้อมกับปูอัดแฮมและสัปรดเสริฟคู่กับชีสเยิ้มๆ' },
-        { id: 2, name: 'ผักโขมแฮมชีส', description: 'แป้งพิซซ่านุ่มๆ ผักโขมคัดอย่างดีพร้อมแฮมหอมๆ ชีสยืดๆ' },
-        { id: 3, name: 'เบค่อนชีส', description: 'แป้งพิซซ่านุ่มๆ เอาใจสายเบค่อนหอมๆพร้อมชีสยืดๆ' },
-        { id: 4, name: 'ไส้กรอกชีส', description: 'แป้งพิซซ่านุ่มๆ พร้อมกับไส้กรอก พร้อมชีสยืดๆ' },
-        { id: 5, name: 'แฮมชีส', description: 'แป้งพิซซ่านุ่มๆ แฮมคู่กับชีสเยิ้มๆ' },
-        { id: 6, name: 'ข้าวโพดชีส', description: 'แป้งพิซซ่านุ่มๆ ข้าวโพดคัดอย่างดีพร้อมกับชีสยืดๆ' },
-        { id: 7, name: 'ซีฟู้ด', description: 'แป้งพิซซ่านุ่มๆ ยกทะเลมาทั้งหมดไม่ว่าจะเป็นกุ้ง หอย หมึก พร้อมชีสเยิ้มๆ' },
+        // UPDATED: Added an 'image' property to each menu item
+        { id: 1, name: 'พิซซ่าฮาวาเอี้ยน', description: 'แป้งพิซซ่านุ่มๆ พร้อมกับปูอัดแฮมและสัปรดเสริฟคู่กับชีสเยิ้มๆ', image: 'hawaiian.jpg' },
+        { id: 2, name: 'ผักโขมแฮมชีส', description: 'แป้งพิซซ่านุ่มๆ ผักโขมคัดอย่างดีพร้อมแฮมหอมๆ ชีสยืดๆ', image: 'spinach-ham-cheese.jpg' },
+        { id: 3, name: 'เบค่อนชีส', description: 'แป้งพิซซ่านุ่มๆ เอาใจสายเบค่อนหอมๆพร้อมชีสยืดๆ', image: 'bacon-cheese.jpg' },
+        { id: 4, name: 'ไส้กรอกชีส', description: 'แป้งพิซซ่านุ่มๆ พร้อมกับไส้กรอก พร้อมชีสยืดๆ', image: 'sausage-cheese.jpg' },
+        { id: 5, name: 'แฮมชีส', description: 'แป้งพิซซ่านุ่มๆ แฮมคู่กับชีสเยิ้มๆ', image: 'ham-cheese.jpg' },
+        { id: 6, name: 'ข้าวโพดชีส', description: 'แป้งพิซซ่านุ่มๆ ข้าวโพดคัดอย่างดีพร้อมกับชีสยืดๆ', image: 'corn-cheese.jpg' },
+        { id: 7, name: 'ซีฟู้ด', description: 'แป้งพิซซ่านุ่มๆ ยกทะเลมาทั้งหมดไม่ว่าจะเป็นกุ้ง หอย หมึก พร้อมชีสเยิ้มๆ', image: 'seafood.jpg' },
     ];
     const prices = { slice: 25, tray: 189 };
     let currentOrder = [];
@@ -42,6 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeModalBtn = document.querySelector('.close-btn');
     const modalTotalPriceEl = document.getElementById('modal-total-price');
     const confirmPaymentBtn = document.getElementById('confirm-payment-btn');
+    const cancelPaymentBtn = document.getElementById('cancel-payment-btn');
 
     // =======================================================
     // --- NAVIGATION LOGIC ---
@@ -49,17 +51,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleNavClick(event) {
         const targetView = event.target.dataset.view;
 
-        // Update button active state
         navButtons.forEach(btn => {
             btn.classList.toggle('active', btn.dataset.view === targetView);
         });
 
-        // Update view visibility
         views.forEach(view => {
             view.classList.toggle('active', view.id === targetView);
         });
 
-        // Refresh data for the activated view
         if (targetView === 'kitchen-view') {
             renderKitchenOrders();
         } else if (targetView === 'report-view') {
@@ -70,16 +69,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-
     // =======================================================
     // --- POS FUNCTIONS ---
     // =======================================================
     function renderMenu() {
         menuGrid.innerHTML = '';
         menuData.forEach(item => {
+            // UPDATED: The 'src' attribute now uses the 'image' property from menuData
             const menuItemHTML = `
                 <div class="menu-item">
-                    <img src="https://placehold.co/400x300/e74c3c/ffffff?text=${item.name.replace('พิซซ่า','')}" alt="${item.name}">
+                    <img src="${item.image}" alt="${item.name}">
                     <div class="menu-item-content">
                         <h3>${item.name}</h3>
                         <p>${item.description}</p>
@@ -134,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function showPaymentModal() {
-        modalTotalPriceEl.innerHTML = `฿${currentTotal.toLocaleString()}`;
+        modalTotalPriceEl.textContent = `฿${currentTotal.toLocaleString()}`;
         paymentModal.style.display = 'flex';
     }
 
@@ -143,17 +142,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function handleConfirmPayment() {
-        // 1. Send to kitchen queue
         const newOrder = {
             id: Date.now(),
             timestamp: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit'}),
-            items: [...currentOrder], // Create a copy
+            items: [...currentOrder],
         };
         const kitchenQueue = JSON.parse(localStorage.getItem('pizzaKitchenQueue')) || [];
         kitchenQueue.push(newOrder);
         localStorage.setItem('pizzaKitchenQueue', JSON.stringify(kitchenQueue));
 
-        // 2. Save to permanent sales history
         const history = JSON.parse(localStorage.getItem('pizzaSalesHistory')) || [];
         const newRecord = {
             id: newOrder.id,
@@ -164,12 +161,10 @@ document.addEventListener('DOMContentLoaded', () => {
         history.push(newRecord);
         localStorage.setItem('pizzaSalesHistory', JSON.stringify(history));
         
-        // 3. Finalize
         alert(`บันทึกยอดขายจำนวน ฿${currentTotal.toLocaleString()} เรียบร้อยแล้ว`);
         closePaymentModal();
         handleClearOrder();
     }
-
 
     // =======================================================
     // --- KITCHEN FUNCTIONS ---
@@ -288,8 +283,12 @@ document.addEventListener('DOMContentLoaded', () => {
     menuGrid.addEventListener('click', handleAddItem);
     clearOrderBtn.addEventListener('click', handleClearOrder);
     checkoutBtn.addEventListener('click', showPaymentModal);
+    
+    // Modal Buttons
     closeModalBtn.addEventListener('click', closePaymentModal);
     confirmPaymentBtn.addEventListener('click', handleConfirmPayment);
+    cancelPaymentBtn.addEventListener('click', closePaymentModal);
+
     window.addEventListener('click', (event) => {
         if (event.target == paymentModal) closePaymentModal();
     });
@@ -315,35 +314,3 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Initial Load ---
     renderMenu();
 });
-/* ... โค้ดส่วนบนเหมือนเดิม ... */
-
-    // Shared Modal
-    const paymentModal = document.getElementById('payment-modal');
-    const closeModalBtn = document.querySelector('.close-btn');
-    const modalTotalPriceEl = document.getElementById('modal-total-price');
-    const confirmPaymentBtn = document.getElementById('confirm-payment-btn');
-    const cancelPaymentBtn = document.getElementById('cancel-payment-btn'); // NEW: Select the cancel button
-
-/* ... โค้ดฟังก์ชันเหมือนเดิม ... */
-
-    // =======================================================
-    // --- EVENT LISTENERS & INITIALIZATION ---
-    // =======================================================
-    // Navigation
-    navButtons.forEach(btn => btn.addEventListener('click', handleNavClick));
-
-    // POS
-    menuGrid.addEventListener('click', handleAddItem);
-    clearOrderBtn.addEventListener('click', handleClearOrder);
-    checkoutBtn.addEventListener('click', showPaymentModal);
-    
-    // Modal Buttons
-    closeModalBtn.addEventListener('click', closePaymentModal);
-    confirmPaymentBtn.addEventListener('click', handleConfirmPayment);
-    cancelPaymentBtn.addEventListener('click', closePaymentModal); // NEW: Add event listener for cancel button
-
-    window.addEventListener('click', (event) => {
-        if (event.target == paymentModal) closePaymentModal();
-    });
-
-/* ... โค้ดส่วนที่เหลือเหมือนเดิม ... */
