@@ -315,3 +315,35 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Initial Load ---
     renderMenu();
 });
+/* ... โค้ดส่วนบนเหมือนเดิม ... */
+
+    // Shared Modal
+    const paymentModal = document.getElementById('payment-modal');
+    const closeModalBtn = document.querySelector('.close-btn');
+    const modalTotalPriceEl = document.getElementById('modal-total-price');
+    const confirmPaymentBtn = document.getElementById('confirm-payment-btn');
+    const cancelPaymentBtn = document.getElementById('cancel-payment-btn'); // NEW: Select the cancel button
+
+/* ... โค้ดฟังก์ชันเหมือนเดิม ... */
+
+    // =======================================================
+    // --- EVENT LISTENERS & INITIALIZATION ---
+    // =======================================================
+    // Navigation
+    navButtons.forEach(btn => btn.addEventListener('click', handleNavClick));
+
+    // POS
+    menuGrid.addEventListener('click', handleAddItem);
+    clearOrderBtn.addEventListener('click', handleClearOrder);
+    checkoutBtn.addEventListener('click', showPaymentModal);
+    
+    // Modal Buttons
+    closeModalBtn.addEventListener('click', closePaymentModal);
+    confirmPaymentBtn.addEventListener('click', handleConfirmPayment);
+    cancelPaymentBtn.addEventListener('click', closePaymentModal); // NEW: Add event listener for cancel button
+
+    window.addEventListener('click', (event) => {
+        if (event.target == paymentModal) closePaymentModal();
+    });
+
+/* ... โค้ดส่วนที่เหลือเหมือนเดิม ... */
