@@ -120,29 +120,13 @@
     <div id="payment-modal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
-            <h2>ชำระเงิน</h2>
-            <p>ยอดที่ต้องชำระ: <strong id="modal-total-price">฿0</strong></p>
-            <p class="scan-text">สแกน QR Code เพื่อชำระเงิน</p>
-            <img src="promptpay-qr.png" alt="PromptPay QR Code" class="qr-code-img">
-            <p class="note">**พนักงานกดยืนยันหลังจากลูกค้าชำระเงินเรียบร้อยแล้ว**</p>
-            <button id="confirm-payment-btn">ยืนยันการชำระเงิน</button>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
-<div id="payment-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <h2>ชำระเงิน</h2>
-            <p>ยอดที่ต้องชำระ: <strong id="modal-total-price">฿0</strong></p>
-            <p class="scan-text">สแกน QR Code เพื่อชำระเงิน</p>
-            <img src="promptpay-qr.png" alt="PromptPay QR Code" class="qr-code-img">
+            <h2>ยืนยันการชำระเงิน</h2>
+            <p class="modal-main-text">ยอดรวมทั้งสิ้น: <strong id="modal-total-price">฿0</strong></p>
+            <p class="modal-question">คุณต้องการยืนยันการชำระเงินสำหรับออเดอร์นี้ใช่หรือไม่?</p>
             
             <div class="modal-actions">
                 <button id="cancel-payment-btn" class="btn-secondary">ยกเลิก</button>
-                <button id="confirm-payment-btn" class="btn-primary">ยืนยันการชำระเงิน</button>
+                <button id="confirm-payment-btn" class="btn-primary">ยืนยัน</button>
             </div>
         </div>
     </div>
